@@ -45,10 +45,10 @@ public class OrderService {
             orderedDish.setCount(cart.getCount());
             orderedDishRepository.save(orderedDish);
         }
-        return getUserOrders(userId);
+        return findUserOrders(userId);
     }
 
-    private List<OrderResponse> getUserOrders(Long userId) {
+    public List<OrderResponse> findUserOrders(Long userId) {
         List<Order> orderList=orderRepository.findUserOrder(userId).orElseThrow(()-> new ResourceNotFoundException("userId","userId",userId));
         return orderDto.mapToOrderResponse(orderList);
     }

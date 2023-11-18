@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
@@ -18,6 +19,7 @@ public class Role {
 
     public static final String USER = "USER";
     public static final String ADMIN = "ADMIN";
+    public static final String STAFF = "STAFF";
     
 
     @Id
@@ -25,6 +27,7 @@ public class Role {
     private Integer id;
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "roles")
     private List<AppUser> appUsers;
 

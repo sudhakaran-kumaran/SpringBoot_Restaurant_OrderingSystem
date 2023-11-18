@@ -35,10 +35,12 @@ public class AppUser {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role roles;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "appUser")
     private List<Order> orderList = new ArrayList<>();
 

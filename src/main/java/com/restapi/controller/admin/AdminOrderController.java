@@ -1,6 +1,7 @@
 package com.restapi.controller.admin;
 
 import com.restapi.response.common.APIResponse;
+import com.restapi.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/order")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminOrderController {
-
     @Autowired
     private APIResponse apiResponse;
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllOrders() {
@@ -22,18 +24,15 @@ public class AdminOrderController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<APIResponse> getUsersOrder(@PathVariable Integer userId) {
-
+    public ResponseEntity<APIResponse> getUsersOrder(@PathVariable Long userId) {
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setData(orderService.findUserOrders(userId));
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/updateStatus")
     public ResponseEntity<APIResponse> updateOrderStatus() {
 
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-
-
-
-
 }

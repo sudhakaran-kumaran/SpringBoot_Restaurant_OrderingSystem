@@ -1,5 +1,6 @@
 package com.restapi.service;
 
+import com.restapi.dto.CartDto;
 import com.restapi.exception.common.ResourceNotFoundException;
 import com.restapi.model.AppUser;
 import com.restapi.model.Cart;
@@ -9,6 +10,8 @@ import com.restapi.repository.CategoryRepository;
 import com.restapi.repository.DishRepository;
 import com.restapi.repository.UserRepository;
 import com.restapi.request.CartRequest;
+import com.restapi.response.CartResponse;
+import com.restapi.response.DishResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +29,16 @@ public class CartService {
     private UserRepository userRepository;
     @Autowired
     private DishRepository dishRepository;
-    public List<Cart> findUserCart(Long userId){
+
+    @Autowired
+    private CartDto cartDto;
+
+    public CartResponse findUserCart(Long userId){
         List<Cart> cart = cartRepository.findUserCart(userId).orElseThrow(()-> new ResourceNotFoundException("cart","userId",userId));
-        return cart;
+        return cartDto.mapToCart(cart);
     }
     @Transactional
-    public List<Cart> addToCart(CartRequest cartRequest){
+    public CartResponse addToCart(CartRequest cartRequest){
         AppUser appUser= userRepository.findById(cartRequest.getUserId()).orElseThrow(()-> new ResourceNotFoundException("userId","userId",cartRequest.getUserId()));
         Dish dish = dishRepository.findById(cartRequest.getDishId())
                 .orElseThrow(() -> new ResourceNotFoundException("dishId", "dishId",
@@ -64,5 +71,10 @@ public class CartService {
         return findUserCart(cartRequest.getUserId());
 
     }
+    public CartResponse deleteUserCart(Integer id, Integer userId){
+        dishRepository.deleteById(Long.valueOf(id));
+        return findUserCart(Long.valueOf(userId));
+    }
+
 
 }
