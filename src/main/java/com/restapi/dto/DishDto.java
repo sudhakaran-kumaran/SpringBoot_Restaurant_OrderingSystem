@@ -16,25 +16,27 @@ import java.util.List;
 
 @Component
 public class DishDto {
+    @Autowired
+    private CategoryRepository categoryRepository;
 
-    public DishResponse mapToDishResponse(List<Dish> dishList){
+    public List<DishResponse> mapToDishResponse(List<Dish> dishList){
 
-        DishResponse dishResponse = new DishResponse();
-        ArrayList<DishRequest> dishRequests = new ArrayList<>();
+
+        ArrayList<DishResponse> dishResponses = new ArrayList<>();
         for(Dish dish:dishList)
         {
-            DishRequest dishRequest = new DishRequest();
-            dishRequest.setId(dish.getId());
-            dishRequest.setTitle(dish.getTitle());
-            dishRequest.setPrice(dish.getPrice());
-            dishRequest.setDescription(dish.getDescription());
-            dishRequest.setPhoto(dish.getPhoto());
-            dishRequest.setCategoryId(dish.getCategory().getId());
+            DishResponse dishResponse = new DishResponse();
+            dishResponse.setId(dish.getId());
+            dishResponse.setTitle(dish.getTitle());
+            dishResponse.setPrice(dish.getPrice());
+            dishResponse.setDescription(dish.getDescription());
+            dishResponse.setPhoto(dish.getPhoto());
+            dishResponse.setCategoryId(dish.getCategory().getId());
 
-            dishRequests.add(dishRequest);
+            dishResponses.add(dishResponse);
         }
-        dishResponse.setDishRequest(dishRequests);
-        return dishResponse;
+
+        return dishResponses;
     }
 
 
@@ -43,11 +45,16 @@ public class DishDto {
         if(dishRequest.getId() != null){
             dish.setId(dishRequest.getId());
         }
+        System.out.println(dishRequest.getCategoryId());
+        System.out.println(dishRequest.getPrice());
+        Category category = categoryRepository.findById(dishRequest.getCategoryId())
+                .orElseThrow(()-> new ResourceNotFoundException("CategoryId","CategoryId",dishRequest.getCategoryId()));
+        System.out.println(category);
         dish.setPrice(dishRequest.getPrice());
         dish.setDescription(dishRequest.getDescription());
         dish.setTitle(dishRequest.getTitle());
         dish.setPhoto(dishRequest.getPhoto());
+        dish.setCategory(category);
         return dish;
     }
-
 }

@@ -1,5 +1,6 @@
 package com.restapi.model;
 
+import com.restapi.response.DishResponse;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Table(name = "dish")
-public class Dish {
+public class Dish{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,24 +34,20 @@ public class Dish {
     @Column(nullable = false, length = 200)
     private Double price;
 
-    @Lob
-    @Nullable
-    @Column(name = "photo",columnDefinition = "BLOB")
-    private byte[] photo;
 
+    @Column(name = "photo")
+    private String photo;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @JoinColumn(name = "categoryId", referencedColumnName = "id")
     private Category category;
 
-
     @JsonIgnore
-    @OneToMany(mappedBy = "dish")
+    @OneToMany(mappedBy = "dish",cascade = CascadeType.ALL)
     private List<Cart> carts = new ArrayList<>();
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
 }

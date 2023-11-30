@@ -8,8 +8,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +46,12 @@ public class AppUser {
     @JsonIgnore
     @OneToMany(mappedBy = "appUser")
     private  List<Cart> carts;
+
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "appUser")
+    private TableDetails tableDetails;
+
 
     @CreationTimestamp
     @Column(updatable = false)

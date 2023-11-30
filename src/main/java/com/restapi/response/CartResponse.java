@@ -6,10 +6,8 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Getter
 @Setter
 public class CartResponse {
-    private List<CartRequest> cartRequests=new ArrayList<>();
-
+    List<CartRequest> cartRequests=new ArrayList<>();
 }

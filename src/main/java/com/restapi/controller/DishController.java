@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +28,17 @@ public class DishController {
     private DishService dishService;
     @GetMapping("/all")
     public ResponseEntity<APIResponse> getAllDishes() {
-        DishResponse dishList =dishService.findAll();
+        List<DishResponse> dishList =dishService.findAll();
         apiResponse.setStatus(HttpStatus.OK.value());
         apiResponse.setData(dishList);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<APIResponse> getCategoryDish(@PathVariable Long categoryId){
+        Dish dishResponse=dishService.findByCategoryId(categoryId);
+        apiResponse.setStatus(HttpStatus.OK.value());
+        apiResponse.setData(dishResponse);
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
 
 }

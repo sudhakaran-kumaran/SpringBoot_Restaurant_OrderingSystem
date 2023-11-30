@@ -1,17 +1,23 @@
 package com.restapi.controller;
 
+import com.restapi.model.Cart;
+import com.restapi.model.Role;
 import com.restapi.request.CartRequest;
+import com.restapi.response.CartResponse;
 import com.restapi.response.common.APIResponse;
+import com.restapi.response.common.EmptyResponse;
 import com.restapi.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
-@PreAuthorize("hasRole('ROLE_USER')")
+@RolesAllowed(Role.USER)
 public class CartController {
     @Autowired
     private APIResponse apiResponse;
@@ -19,25 +25,24 @@ public class CartController {
     private CartService cartService;
     @GetMapping("/{userId}")
     public ResponseEntity<APIResponse> getUserCart(@PathVariable Long userId){
+        CartResponse cart=cartService.findUserCart(userId);
         apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setData(cartService.findUserCart(userId));
+        apiResponse.setData(cart);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-    @PostMapping("/addtoCart")
+    @PostMapping
     public ResponseEntity<APIResponse> addtoCart(@RequestBody CartRequest cartRequest){
+        CartResponse cart=cartService.addToCart(cartRequest);
         apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setData(cartService.addToCart(cartRequest));
+        apiResponse.setData(cart);
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
-    @PutMapping
-    public ResponseEntity<APIResponse> updateCart(){
-        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
-    }
-    @DeleteMapping("/{userId}/{id}")
-    public ResponseEntity<APIResponse> deleteDishFromCart(@PathVariable Integer id,@PathVariable Integer userId){
 
+    @DeleteMapping("/{user}/{id}")
+    public ResponseEntity<APIResponse> deleteDishFromCart(@PathVariable Integer id,@PathVariable Integer user){
+        CartResponse cart=cartService.deleteUserCart(id,user);
         apiResponse.setStatus(HttpStatus.OK.value());
-        apiResponse.setData(cartService.deleteUserCart(id,userId));
+        apiResponse.setData(cart);
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
 }

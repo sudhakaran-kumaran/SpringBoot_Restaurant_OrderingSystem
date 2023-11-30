@@ -13,6 +13,10 @@ import java.util.List;
 @Getter
 @Setter
 public class DishResponse {
-    private List<DishRequest> dishRequest = new ArrayList<>();
-
+    private Long id;
+    private Long categoryId;
+    private String title;
+    private String description;
+    private Double price;
+    private String photo;
 }

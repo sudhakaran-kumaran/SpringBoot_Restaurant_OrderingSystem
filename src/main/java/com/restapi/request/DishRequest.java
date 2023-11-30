@@ -18,5 +18,6 @@ public class DishRequest {
     private String title;
     private String description;
     private Double price;
-    private byte[] photo;
+    private String photo;
+
 }

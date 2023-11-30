@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -36,5 +37,9 @@ public class CategoryService {
     public CategoryResponse deleteById(Integer id) {
             categoryRepository.deleteById(Long.valueOf(id));
             return findAll();
+    }
+
+    public Optional<Category> findById(Long categoryId) {
+      return categoryRepository.findById(categoryId);
     }
 }

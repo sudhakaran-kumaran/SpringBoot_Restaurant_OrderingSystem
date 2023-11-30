@@ -8,11 +8,13 @@ import com.restapi.repository.CategoryRepository;
 import com.restapi.repository.DishRepository;
 import com.restapi.request.DishRequest;
 import com.restapi.response.DishResponse;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -23,13 +25,15 @@ public class DishService {
     private CategoryRepository categoryRepository;
     @Autowired
     private DishRepository dishRepository;
+    @Autowired
+    private StorageService storageService;
 
 
-    public DishResponse findAll(){
+    public List<DishResponse> findAll(){
         return dishDto.mapToDishResponse(dishRepository.findAll());
     }
     @Transactional
-    public DishResponse createDish(DishRequest dishRequest){
+    public List<DishResponse> createDish(DishRequest dishRequest){
         Dish dish=dishDto.mapToDish(dishRequest);
         Category category = categoryRepository.findById(dishRequest.getCategoryId()).orElseThrow(()-> new ResourceNotFoundException("CategoryId","CategoryId",dishRequest.getCategoryId()));
         dish.setCategory(category);
@@ -37,15 +41,29 @@ public class DishService {
         return findAll();
     }
     @Transactional
-    public DishResponse updateDish(DishRequest dishRequest){
+    public List<DishResponse>  updateDish(DishRequest dishRequest){
+
         Dish dish=dishDto.mapToDish(dishRequest);
         Category category = categoryRepository.findById(dishRequest.getCategoryId()).orElseThrow(()-> new ResourceNotFoundException("CategoryId","CategoryId",dishRequest.getCategoryId()));
         dish.setCategory(category);
         dishRepository.save(dish);
         return findAll();
     }
-    public DishResponse deleteById(Integer id){
+    public List<DishResponse> deleteById(Integer id){
         dishRepository.deleteById(Long.valueOf(id));
         return findAll();
+    }
+
+    public Dish findByCategoryId(Long categoryId) {
+        return dishRepository.findById(categoryId).orElseThrow(()-> new ResourceNotFoundException("user","id",categoryId));
+    }
+
+    public File getFile(Long id) throws IOException {
+        Dish dish = dishRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("id", "id", id));
+
+        Resource resource = storageService.loadFileAsResource(dish.getPhoto());
+
+        return resource.getFile();
     }
 }
